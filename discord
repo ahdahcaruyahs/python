@@ -1,0 +1,32 @@
+#may or may not work. Respect the API limits or you may get banned.
+import string
+import random
+import requests
+import time
+
+# Replace 'YOUR_USER_TOKEN' with your actual Discord user token
+YOUR_USER_TOKEN = 'token_here'
+
+# Define the rate limit delay in seconds
+RATE_LIMIT_DELAY = 10  # Adjust as needed
+
+def generate_alphanumeric(length=18):
+    alphanumeric_chars = string.ascii_letters + string.digits
+    return ''.join(random.choice(alphanumeric_chars) for _ in range(length))
+
+def send_to_discord(code):
+    url = f"https://discordapp.com/api/v9/entitlements/gift-codes/{code}?with_application=false&with_subscription_plan=true"
+    headers = {
+        'Authorization': f'{YOUR_USER_TOKEN}'
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        print(f"Successfully sent code {code} to Discord.")
+    else:
+        print(f"Failed to send code {code} to Discord. Status code: {response.status_code}")
+
+if __name__ == "__main__":
+    while True:
+        generated_code = generate_alphanumeric()
+        send_to_discord(generated_code)
+        time.sleep(RATE_LIMIT_DELAY)
